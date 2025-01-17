@@ -1,0 +1,6 @@
+zabbixservers:
+  hosts:
+    zabbixserver:
+      ansible_host:
+      ansible_port:
+
