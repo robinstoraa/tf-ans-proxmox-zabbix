@@ -1,0 +1,4 @@
+prod:
+  hosts:
+    zabbixserver:
+      ansible_host: "{{ lookup('ansible.builtin.env', 'TF_VAR_VMIP', Default=Undefined) }}"

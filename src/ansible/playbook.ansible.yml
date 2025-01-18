@@ -1,0 +1,10 @@
+---
+- name: Update host
+  hosts: zabbixserver
+  remote_user: root
+
+  tasks:
+    - name: Update all Debian/Ubuntu packages to their latest version
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
