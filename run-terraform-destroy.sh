@@ -1,5 +1,4 @@
 #!/bin/bash
 source .env
 cd src/terraform
-terraform plan
-terraform apply
+terraform destroy

@@ -2,3 +2,6 @@ prod:
   hosts:
     zabbixserver:
       ansible_host: "{{ lookup('ansible.builtin.env', 'TF_VAR_vmip', Default=Undefined) }}"
+      ansible_user: "{{ lookup('ansible.builtin.env', 'TF_VAR_virtual_environment_vmuser', Default=Undefined) }}"
+      ansible_password: "{{ lookup('ansible.builtin.env', 'TF_VAR_virtual_environment_vmpassword', Default=Undefined) }}"
+      ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
