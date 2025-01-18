@@ -45,6 +45,11 @@ variable "vmid" {
   description = "VM ID"
 }
 
+variable "vmmask" {
+  type = number
+  description = "Subnet mask in / notation"
+}
+
 variable "virtual_environment_nodename" {
   type = string
   description = "Virtual environment node name"
@@ -53,4 +58,24 @@ variable "virtual_environment_nodename" {
 variable "virtual_environment_vmdisksize" {
   type = number
   description = "Virtual environment vm disk size"
+}
+
+variable "vmgateway" {
+  type = string
+  description = "Virtual machine gateway"
+}
+
+variable "vmdns1" {
+  type = string
+  description = "VM DNS 1"
+}
+
+variable "vmdns2" {
+  type = string
+  description = "VM DNS 2"
+}
+
+variable "networkbridge" {
+  type = string
+  description = "Network bridge"
 }
