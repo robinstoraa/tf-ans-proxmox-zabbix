@@ -79,3 +79,13 @@ variable "networkbridge" {
   type = string
   description = "Network bridge"
 }
+
+variable "vmcpucores" {
+  type = number
+  description = "VM CPU cores"
+}
+
+variable "vmmemory" {
+  type = number
+  description = "VM Memory in MiB"
+}

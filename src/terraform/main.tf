@@ -32,12 +32,12 @@ resource "proxmox_virtual_environment_vm" "zabbix_vm" {
     size         = var.virtual_environment_vmdisksize
   }
   cpu {
-    cores        = 4
+    cores        = var.vmcpucores
     type         = "x86-64-v2-AES"  # recommended for modern CPUs
   }
   memory {
-    dedicated = 8192
-    floating  = 8192 # set equal to dedicated to enable ballooning
+    dedicated = var.vmmemory
+    floating  = var.vmmemory # set equal to dedicated to enable ballooning
   }
   network_device {
     bridge = var.networkbridge
