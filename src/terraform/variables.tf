@@ -89,3 +89,8 @@ variable "vmmemory" {
   type = number
   description = "VM Memory in MiB"
 }
+
+variable "vmtimezone" {
+  type = string
+  description = "VM Timezone"
+}
