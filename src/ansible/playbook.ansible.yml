@@ -6,3 +6,37 @@
   tasks:
     - name: Ping host
       ansible.builtin.ping:
+
+    - name: Make sure xz-utils is installed
+      ansible.builtin.apt:
+        name: xz-utils
+        state: present
+
+    - name: Install Zabbix deb
+      ansible.builtin.apt:
+        deb: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
+
+    - name: Install Zabbix packages
+      ansible.builtin.apt:
+        name:
+          - zabbix-server-pgsql
+          - zabbix-frontend-php
+          - php8.3-pgsql
+          - zabbix-nginx-conf
+          - zabbix-sql-scripts
+          - zabbix-agent
+        update_cache: true
+
+    - name: Install postgresql
+      ansible.builtin.apt:
+        name: postgresql
+        state: present
+
+    - name: Create user for Zabbix in postgresql
+      community.postgresql.postgresql_user:
+        name: zabbix
+        password: 
+        
+    - name: Create DB for Zabbix
+      community.postgresql.postgresql_db:
+        name: 
