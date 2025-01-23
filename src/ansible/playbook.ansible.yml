@@ -43,32 +43,68 @@
         name: acl
         state: present
 
+    - name: Set postgres user password
+      ansible.builtin.command: sudo -u postgres psql -c "ALTER USER postgres PASSWORD '{{ lookup('ansible.builtin.env', 'TF_VAR_postgrespassword', Default=Undefined) }}';"
+
     - name: Create user for Zabbix in postgresql
       community.postgresql.postgresql_user:
         name: zabbix
         password: "{{ lookup('ansible.builtin.env', 'TF_VAR_zabbixdbpassword', Default=Undefined) }}"
-        login_host: 127.0.0.1
-      become_user: postgres
+        login_host: localhost
+        login_password: "{{ lookup('ansible.builtin.env', 'TF_VAR_postgrespassword', Default=Undefined) }}"
 
     - name: Create DB for Zabbix
       community.postgresql.postgresql_db:
         name: zabbix
-        owner: zabbix
+        owner: "zabbix"
         login_host: 127.0.0.1
-      become_user: postgres
+        login_password: "{{ lookup('ansible.builtin.env', 'TF_VAR_postgrespassword', Default=Undefined) }}"
 
-    - name: Import DB schema and initial data
+    - name: Import DB schema
       community.postgresql.postgresql_db:
+        state: restore
         name: zabbix
         target: /usr/share/zabbix/sql-scripts/postgresql/server.sql.gz
         login_host: 127.0.0.1
-      become_user: postgres
+        login_user: zabbix
+        login_password: "{{ lookup('ansible.builtin.env', 'TF_VAR_zabbixdbpassword', Default=Undefined) }}"
 
-    #- name: Replace a localhost entry searching for a literal string to avoid escaping
-    #  ansible.builtin.lineinfile:
-    #    path: /etc/hosts
-    #    search_string: 'DBPassword='
-    #    line: 127.0.0.1 localhost
-    #    owner: root
-    #    group: root
-    #    mode: '0644'
+    - name: Add DB password to zabbix configuration
+      ansible.builtin.lineinfile:
+        path: /etc/zabbix/zabbix_server.conf
+        search_string: '# DBPassword='
+        line: "DBPassword={{ lookup('ansible.builtin.env', 'TF_VAR_zabbixdbpassword', Default=Undefined) }}"
+
+    - name: Make nginx 8080 defaultserver
+      ansible.builtin.lineinfile:
+        path: /etc/zabbix/nginx.conf
+        search_string: "listen"
+        line: "listen 8080 default_server;"
+
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Restart zabbix-server.service
+      ansible.builtin.systemd_service:
+        name: zabbix-server
+        state: restarted
+        enabled: true
+
+    - name: Restart zabbix-agent.service
+      ansible.builtin.systemd_service:
+        name: zabbix-agent
+        state: restarted
+        enabled: true
+
+    - name: Restart nginx.service
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: restarted
+        enabled: true
+
+    - name: Restart php8.3-fpm.service
+      ansible.builtin.systemd_service:
+        name: php8.3-fpm
+        state: restarted
+        enabled: true
